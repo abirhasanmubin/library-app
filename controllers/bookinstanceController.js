@@ -1,6 +1,7 @@
 var BookInstance = require('../models/bookinstance')
 var Book = require('../models/book')
 var async = require('async')
+const validator = require('express-validator');
 
 
 
