@@ -154,13 +154,51 @@ exports.book_create_post = [
 ]
 
 
-exports.book_delete_get = function (req, res) {
-    res.send('NOT IMPLEMENTED: Book delete GET')
+exports.book_delete_get = function (req, res, next) {
+    async.parallel({
+        book: function (callback) {
+            Book.findById(req.params.id).populate('author').populate('genre').exec(callback)
+        },
+        books_instance: function (callback) {
+            BookInstance.find({ 'book': req.params.id }).exec(callback)
+        },
+    }, function (err, results) {
+        if (err) {
+            return next(err)
+        }
+        if (results.book == null) {
+            res.redirect('/catalog/books')
+        }
+        res.render('book_delete', { title: 'Delete Books', book: results.book, book_instances: results.books_instance })
+    })
 }
 
 
-exports.book_delete_post = function (req, res) {
-    res.send('NOT IMPLEMENTED: Book delete POST')
+exports.book_delete_post = function (req, res, next) {
+    async.parallel({
+        book: function (callback) {
+            Book.findById(req.params.id).populate('author').populate('genre').exec(callback)
+        },
+        books_instance: function (callback) {
+            BookInstance.find({ 'book': req.params.id }).exec(callback)
+        },
+    }, function (err, results) {
+        if (err) {
+            return next(err)
+        }
+        if (results.books_instance.length > 0) {
+            res.render('book_delete', { title: 'Delete Books', book: results.book, book_instances: results.books_instance })
+            return
+        }
+        else {
+            Book.findByIdAndRemove(req.body.id, function deleteBook(err) {
+                if (err) {
+                    return next(err)
+                }
+                res.redirect('/catalog/books')
+            })
+        }
+    })
 }
 
 
@@ -185,8 +223,7 @@ exports.book_update_get = function (req, res, next) {
             err.status = 404
             return next(err)
         }
-        // Success.
-        // Mark our selected genres as checked.
+
         for (var i = 0; i < results.genres.length; i++) {
             for (var j = 0; j < results.book.genre.length; j++) {
                 if (results.genres[i]._id.toString() == results.book.genre[j]._id.toString()) {

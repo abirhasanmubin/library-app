@@ -138,11 +138,60 @@ exports.author_delete_post = function (req, res, next) {
 }
 
 
-exports.author_update_get = function (req, res) {
-    res.send('NOT IMPLEMENTED: Author update GET')
+exports.author_update_get = function (req, res, next) {
+    Author.findById(req.params.id, function (err, author) {
+        if (err) {
+            return next(err)
+        }
+        if (author == null) {
+            var err = new Error('Author not found.')
+            err.status = 404
+            return next(err)
+        }
+        res.render('author_form', { title: "Update Author", author: author })
+    })
 }
 
 
-exports.author_update_post = function (req, res) {
-    res.send('NOT IMPLEMENTED: Author update POST')
-}
+exports.author_update_post = [
+    body('first_name').isLength({ min: 1 }).trim().withMessage('First name must be specified.')
+        .isAlphanumeric().withMessage('First name can not contain non alphanumeric charecters'),
+
+    body('family_name').isLength({ min: 1 }).trim().withMessage('First name must be specified.')
+        .isAlphanumeric().withMessage('Family name can not contain non alphanumeric charecters'),
+
+    body('date_of_birth', 'Invalid date of birth').optional({ checkFalsy: true }).isISO8601(),
+
+    body('date_of_death', 'Invalid date of death').optional({ checkFalsy: true }).isISO8601(),
+
+    sanitizeBody('first_name').escape(),
+    sanitizeBody('family_name').escape(),
+    sanitizeBody('date_of_birth').toDate(),
+    sanitizeBody('date_of_death').toDate(),
+
+    (req, res, next) => {
+        const errors = validationResult(req)
+
+        var author = new Author({
+            first_name: req.body.first_name,
+            family_name: req.body.family_name,
+            date_of_birth: req.body.date_of_birth,
+            date_of_death: req.body.date_of_death,
+            _id: req.params.id,
+        })
+
+        if (!errors.isEmpty()) {
+            res.render('author_form', { title: 'Update Author', author: author, errors: errors.array() })
+            return
+        }
+
+        else {
+            Author.findByIdAndUpdate(req.params.id, author, {}, function (err, up_author) {
+                if (err) {
+                    return next(err)
+                }
+                res.redirect(up_author.url)
+            })
+        }
+    }
+]

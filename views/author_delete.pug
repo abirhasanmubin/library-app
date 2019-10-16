@@ -15,7 +15,7 @@ block content
             dl
             each book in author_books
                 dt
-                    a(href="book.url") #{book.title}
+                    a(href=book.url) #{book.title}
                 dd #{book.summary}
     else
         p Do You really want to delete this Auhtor?

@@ -32,5 +32,12 @@ AuthorSchema.virtual('lifespan').get(function () {
     return str
 })
 
+AuthorSchema.virtual('dob_formatted').get(function () {
+    return moment(this.date_of_birth).format('YYYY-MM-DD')
+})
+AuthorSchema.virtual('dod_formatted').get(function () {
+    return moment(this.date_of_death).format('YYYY-MM-DD')
+})
+
 
 module.exports = mongoose.model('Author', AuthorSchema)
