@@ -11,5 +11,5 @@ cd library-app
 npm install
 ```
 ```bash
-node app.js
+npm run start
 ```

@@ -5,8 +5,10 @@ var BookInstance = require('../models/bookinstance')
 var async = require('async')
 const validator = require('express-validator');
 
-const { body, validationResult } = require('express-validator/check');
-const { sanitizeBody } = require('express-validator/filter');
+// const { body, validationResult } = require('express-validator/check');
+// const { sanitizeBody } = require('express-validator/filter');
+
+const { body, validationResult, sanitizeBody } = require('express-validator')
 
 exports.index = function (req, res) {
 

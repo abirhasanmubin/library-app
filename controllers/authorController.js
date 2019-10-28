@@ -3,9 +3,10 @@ var Author = require('../models/author')
 var Book = require('../models/book')
 const validator = require('express-validator');
 
-const { body, validationResult } = require('express-validator/check')
-const { sanitizeBody } = require('express-validator/filter')
+// const { body, validationResult } = require('express-validator')
+// const { sanitizeBody } = require('express-validator')
 
+const { body, validationResult, sanitizeBody } = require('express-validator')
 
 exports.author_list = function (req, res, next) {
 

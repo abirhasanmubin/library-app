@@ -17,7 +17,8 @@ var app = express();
 app.use(helmet())
 
 var mongoose = require('mongoose');
-var mongoDB = process.env.library_db;
+const library_db = "mongodb://127.0.0.1:27017/library"
+var mongoDB = library_db;
 // var mongoDB = process.env.MONGODB_URI
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
